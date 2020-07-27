@@ -89,7 +89,7 @@ if __name__ == "__main__":
     path = "/home/mpcutino/data/{0}/{1}.bag".format(class_bag, bag_name)
     start_indx = get_start_index(class_bag, bag_name, IMG_FOLDER)
     print(start_indx)
-    ammount = 10
+    ammount = -1
     #RECORDAR en la siguiente iteracion comenzar en start_index + ammount
 
     bag = rosbag.Bag(path)

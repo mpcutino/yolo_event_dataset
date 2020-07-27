@@ -1,6 +1,6 @@
 
-CLASS_BAG = "person"
-BAG_NAME = "Record01"
+CLASS_BAG = "chair"
+BAG_NAME = "Record02"
 
 IMG_FOLDER = "images"
 EVENT_FOLDER = "events"

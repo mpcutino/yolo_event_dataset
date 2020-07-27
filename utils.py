@@ -27,7 +27,8 @@ def check_missing_annot(class_name, bag_name, data_folder="data_bBox", annot_fil
         print(r)
 
 def def_image(img_h, img_w):
-    return np.full((img_h, img_w, 3), (255, 255, 255))
+    # return np.full((img_h, img_w, 3), (255, 255, 255))
+    return np.zeros((img_h, img_w, 3))
 
 
 if __name__ == "__main__":

@@ -17,7 +17,7 @@ def get_number_of_annotated_events(class_name, bag_name, data_folder="data_bBox"
     if not os.path.exists(annot_file):
         return 0
     with open(annot_file) as fd:
-        return len(fd.readlines())
+        return len(fd.readlines()) - 1
 
 
 def fix_csv_unnamed():
@@ -35,13 +35,12 @@ if __name__ == "__main__":
     start_indx = get_number_of_annotated_events(class_bag, bag_name)
     print(start_indx)
     ammount = -1
-    #RECORDAR en la siguiente iteracion comenzar en start_index + ammount
 
     # update_yolo_data(CLASS_BAG, BAG_NAME)
     # update_images_bBox(class_bag, bag)
 
-    anotate_events(bag, start_indx=start_indx, how_many=ammount)
+    # anotate_events(bag, class_bag=class_bag, start_indx=start_indx, how_many=ammount)
     # plot_events_images(class_bag, bag_name)
     # plot_events_imgs_by_name(class_bag, bag_name, "1594373652690415658.png")
     # 1594373551270458649.png
-    # plot_all_events_at_image_fr(bag)
+    plot_all_events_at_image_fr(bag, class_bag=class_bag)

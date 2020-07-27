@@ -120,7 +120,8 @@ def plot_all_events_at_image_fr(bag, topic="/dvs/events", save_folder="data_bBox
                 previous_data = current_data
                 current_data = tmp
                 img_ts = genpy.Time.from_sec(current_data.timestamp*1e-9)
-            color = (0, 0, 255) if p > 0 else (255, 0, 0)
+            # color = (0, 0, 255) if p > 0 else (255, 0, 0)
+            color = (255, 255, 255)
             image[y][x] = color
     # save last events
     img_name = str(current_data.timestamp)

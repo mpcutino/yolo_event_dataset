@@ -5,7 +5,7 @@ from cv_bridge import CvBridge
 
 from darknet import get_image_with_bb, load_yolov3
 from utils import get_filename, remove_extension
-from constants import CLASS_BAG, BAG_NAME, IMG_FOLDER, BAG_BASE_PATH
+from constants import CLASS_BAG, BAG_NAME, IMG_FOLDER, BAG_BASE_PATH, CLEAN_IMG_FOLDER
 
 
 def save_images(bag, topic="/dvs/image_raw", save_folder="data_bBox", class_bag="chair", start_indx_img=0, how_many=-1):
@@ -17,8 +17,11 @@ def save_images(bag, topic="/dvs/image_raw", save_folder="data_bBox", class_bag=
 
     save_folder = os.path.join(save_folder, bag_name)
     save_folder = os.path.join(save_folder, IMG_FOLDER)
+    clean_img_folder = os.path.join(save_folder, CLEAN_IMG_FOLDER)
     if not os.path.exists(save_folder):
         os.makedirs(save_folder)
+    if not os.path.exists(clean_img_folder):
+        os.makedirs(clean_img_folder)
     
     net = load_yolov3()
 
@@ -34,18 +37,16 @@ def save_images(bag, topic="/dvs/image_raw", save_folder="data_bBox", class_bag=
             if count < start_indx_img: continue # esta imagen no es de interes (probablemente ya ha sido analizada)
             if how_many > 0 and (start_indx_img + how_many <= count):
                 break # las imagenes de aqui en adelante no interesan, seguramente seran analizadas en otro momento
+            # timestamp = msg.timestamp
+            timestamp = msg.message.header.stamp
+            filename = str(timestamp) + ".png"
 
             cv_image = bridge.imgmsg_to_cv2(msg.message, "rgb8")
             # solo salvar de manera temporal para usar darknet
-            tmp_name = "tmp.png"
+            tmp_name = os.path.join(clean_img_folder, filename)
             cv2.imwrite(tmp_name, cv_image)
             pred, img = get_image_with_bb(net, tmp_name)
-            os.remove(tmp_name)
 
-            # timestamp = msg.timestamp
-            timestamp = msg.message.header.stamp
-
-            filename = str(timestamp) + ".png"
             img_name = os.path.join(save_folder, filename)
             cv2.imwrite(img_name, img)
 
@@ -54,7 +55,7 @@ def save_images(bag, topic="/dvs/image_raw", save_folder="data_bBox", class_bag=
                 x, y, w, h = bbox
 
                 fd.write("{0},{1},{2},{3},{4},{5},{6},{7},{8}\n".format(
-                    str(timestamp), 
+                    str(timestamp),
                     filename,
                     class_name,
                     prob,
@@ -77,9 +78,9 @@ def get_start_index(class_bag, bag_name, target_folder, save_folder="data_bBox")
     start_indx = 0
     # listar la carpeta en la que se guardan los archivos y, si tiene elementos, inicializar el indice
     # en el length - 1 (por el archivo annotate.txt)
-    data_dolder = os.path.join("data_bBox", class_bag+"/"+bag_name +"/"+target_folder)
+    data_dolder = os.path.join(save_folder, class_bag+"/"+bag_name +"/"+target_folder)
     if os.path.exists(data_dolder):
-        start_indx = max(len(os.listdir(data_dolder)) - 1, 0)
+        start_indx = max(len(os.listdir(data_dolder)) - 2, 0)
     return start_indx
 
 
@@ -89,6 +90,7 @@ if __name__ == "__main__":
     path = os.path.join(BAG_BASE_PATH, "{0}/{1}.bag".format(class_bag, bag_name))
     start_indx = get_start_index(class_bag, bag_name, IMG_FOLDER)
     print(start_indx)
+    start_indx = -1
     ammount = -1
     #RECORDAR en la siguiente iteracion comenzar en start_index + ammount
 

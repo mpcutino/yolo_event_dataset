@@ -5,3 +5,5 @@ writes them in disk and get the bounding boxes according to YOLO detection.
 The output from YOLO should be reviewed. If there are some missing detections,
 then use [INSERT REFERENCE] fro manually put the bounding boxes.
 
+To check the missing detections I use *check_missing_annot* from *util.py* 
+file.

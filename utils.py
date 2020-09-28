@@ -11,11 +11,13 @@ def get_filename(file, char="/"):
         return split[-1]
     return ""
 
+
 def remove_extension(file):
     split = file.split(".")
     if len(split) > 1:
         return split[-2]
     return ""
+
 
 def check_missing_annot(class_name, bag_name, data_folder="data_bBox", annot_file="annotate.txt"):
     file_name = path.join(path.join(data_folder, class_name), bag_name)
@@ -23,8 +25,9 @@ def check_missing_annot(class_name, bag_name, data_folder="data_bBox", annot_fil
     file_name = path.join(file_name, annot_file)
     annotation_df = pd.read_csv(file_name, sep=',')
 
-    for _, r in annotation_df.loc[annotation_df["x"]==-1, ["boxImg_name"]].iterrows():
+    for _, r in annotation_df.loc[annotation_df["w"] == -1, ["boxImg_name"]].iterrows():
         print(r)
+
 
 def def_image(img_h, img_w):
     # return np.full((img_h, img_w, 3), (255, 255, 255))

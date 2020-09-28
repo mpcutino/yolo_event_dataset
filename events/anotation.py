@@ -21,9 +21,8 @@ def anotate_events(bag, topic="/dvs/events", save_folder="data_bBox", class_bag=
         os.makedirs(save_folder)
 
     df = pd.read_csv(img_annot_file)
-    df = df.loc[df["class_name"]==class_bag]
-    if df.shape[0] == 0: 
-        print("Class not present in file")
+    if df.empty: 
+        print("Empty file")
         return
 
     previous_data = df.iloc[0]
@@ -56,7 +55,7 @@ next_box_h,next_proba,next_tagger\n")
                     previous_data = current_data
                     current_data = tmp
                     img_ts = genpy.Time.from_sec(current_data.timestamp*1e-9)
-                if is_in_union_box(x, y, previous_data, current_data):
+                if is_in_union_box(x, y, previous_data, current_data, class_bag):
                     # para solo procesar un numero determinado de eventos en cada corrida
                     events_count += 1
                     if events_count < start_indx: continue
@@ -85,9 +84,9 @@ next_box_h,next_proba,next_tagger\n")
                     ))
 
 
-def is_in_union_box(x, y, previous_data, current_data):
-    return is_in_box(x, y, previous_data) or is_in_box(x, y, current_data)
+def is_in_union_box(x, y, previous_data, current_data, class_name):
+    return is_in_box(x, y, previous_data, class_name) or is_in_box(x, y, current_data, class_name)
 
 
-def is_in_box(x, y, data):
-    return data.x <= x <= (data.x + data.w) and data.y <= y <= (data.y + data.h)
+def is_in_box(x, y, data, class_name):
+    return data.class_name == class_name and data.x <= x <= (data.x + data.w) and data.y <= y <= (data.y + data.h)

@@ -5,7 +5,7 @@ from cv_bridge import CvBridge
 
 from darknet import get_image_with_bb, load_yolov3
 from utils import get_filename, remove_extension
-from constants import CLASS_BAG, BAG_NAME, IMG_FOLDER
+from constants import CLASS_BAG, BAG_NAME, IMG_FOLDER, BAG_BASE_PATH
 
 
 def save_images(bag, topic="/dvs/image_raw", save_folder="data_bBox", class_bag="chair", start_indx_img=0, how_many=-1):
@@ -86,7 +86,7 @@ def get_start_index(class_bag, bag_name, target_folder, save_folder="data_bBox")
 if __name__ == "__main__":
     class_bag = CLASS_BAG
     bag_name = BAG_NAME
-    path = "/home/mpcutino/data/{0}/{1}.bag".format(class_bag, bag_name)
+    path = os.path.join(BAG_BASE_PATH, "{0}/{1}.bag".format(class_bag, bag_name))
     start_indx = get_start_index(class_bag, bag_name, IMG_FOLDER)
     print(start_indx)
     ammount = -1

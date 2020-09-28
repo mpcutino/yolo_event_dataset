@@ -1,6 +1,7 @@
 
-CLASS_BAG = "chair"
-BAG_NAME = "Record02"
+CLASS_BAG = "person"
+BAG_NAME = "Record08"
+BAG_BASE_PATH = "/media/mpcutino/MigueHD/EventsData/Recorded videos data"
 
 IMG_FOLDER = "images"
 EVENT_FOLDER = "events"

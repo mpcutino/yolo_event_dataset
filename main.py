@@ -4,7 +4,7 @@ import rosbag
 import pandas as pd
 
 from manual.update import update_yolo_data, update_images_bBox
-from constants import CLASS_BAG, BAG_NAME, EVENT_FOLDER
+from constants import CLASS_BAG, BAG_NAME, EVENT_FOLDER, BAG_BASE_PATH
 from events.anotation import anotate_events
 from events.plot_data import plot_events_imgs_by_name, plot_events_images, plot_all_events_at_image_fr
 
@@ -29,18 +29,18 @@ def fix_csv_unnamed():
 if __name__ == "__main__":
     class_bag = CLASS_BAG
     bag_name = BAG_NAME
-    path = "/home/mpcutino/data/{0}/{1}.bag".format(class_bag, bag_name)
+    path = os.path.join(BAG_BASE_PATH, "{0}/{1}.bag".format(class_bag, bag_name))
     bag = rosbag.Bag(path)
 
     start_indx = get_number_of_annotated_events(class_bag, bag_name)
     print(start_indx)
-    ammount = -1
+    ammount = 500000
 
-    # update_yolo_data(CLASS_BAG, BAG_NAME)
+    update_yolo_data(CLASS_BAG, BAG_NAME)
     # update_images_bBox(class_bag, bag)
 
-    # anotate_events(bag, class_bag=class_bag, start_indx=start_indx, how_many=ammount)
+    anotate_events(bag, class_bag=class_bag, start_indx=start_indx, how_many=ammount)
     # plot_events_images(class_bag, bag_name)
     # plot_events_imgs_by_name(class_bag, bag_name, "1594373652690415658.png")
     # 1594373551270458649.png
-    plot_all_events_at_image_fr(bag, class_bag=class_bag)
+    # plot_all_events_at_image_fr(bag, class_bag=class_bag)

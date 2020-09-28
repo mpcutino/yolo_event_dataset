@@ -157,9 +157,10 @@ def predict_image_class_and_BB(net, image_path):
     meta = load_meta(coco_data_path)
     return detect(net, meta, image_path)
 
+
 def get_image_with_bb(dark_net, image_path):
     prediction = predict_image_class_and_BB(dark_net, image_path)
-    
+
     img = cv2.imread(image_path)
     transform_pred = []
     for pred in prediction:

@@ -20,7 +20,7 @@ def update_yolo_data(class_name, bag_name, labels_file="manual/missing_labels.cs
     sustituir = ["class_name", "proba", "x", "y", "w", "h", "tagger"]
     for _, r in manual_data_df.iterrows():
         new_values = [r.class_name, 1, r.x, r.y, r.w, r.h, "manual"]
-        annotation_df.loc[annotation_df['boxImg_name']==r.filename, sustituir] = new_values
+        annotation_df.loc[annotation_df['boxImg_name'] == r.filename, sustituir] = new_values
 
     annotation_df.to_csv(file_name, index=False)
 
@@ -49,18 +49,3 @@ def update_images_bBox(class_name, bag, topic="/dvs/image_raw", data_folder="dat
 
         img_name = path.join(save_folder, filename)
         cv2.imwrite(img_name, cv_image)
-
-
-def rm_images(class_name, bag, topic="/dvs/image_raw", data_folder="data_bBox", annot_file="annotate.txt"):
-    bag_name = get_filename(bag.filename, char="/")
-    bag_name = remove_extension(bag_name)
-
-    save_folder = path.join(path.join(data_folder, class_name), bag_name)
-    save_folder = path.join(save_folder, IMG_FOLDER)
-    file_name = path.join(save_folder, annot_file)
-    df = pd.read_csv(file_name)
-
-    for msg in bag.read_messages(topic):
-        filename = str(msg.timestamp) + ".png"
-        img_name = path.join(save_folder, filename)
-        remove(img_name)

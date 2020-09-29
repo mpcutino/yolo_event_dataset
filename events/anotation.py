@@ -7,14 +7,15 @@ from utils import get_filename, remove_extension
 from constants import CLASS_BAG, BAG_NAME, EVENT_FOLDER, IMG_FOLDER
 
 
-def anotate_events(bag, topic="/dvs/events", save_folder="data_bBox", class_bag="chair", start_indx=0, how_many=-1):
+def anotate_events(bag, topic="/dvs/events", save_folder="data_bBox", class_bag="chair",
+                   start_indx=0, how_many=-1, img_annotate_file="annotate.txt"):
     
     save_folder = os.path.join(save_folder, class_bag)
     bag_name = get_filename(bag.filename, char="/")
     bag_name = remove_extension(bag_name)
     save_folder = os.path.join(save_folder, bag_name)
     img_annot_file = os.path.join(save_folder, IMG_FOLDER)
-    img_annot_file = os.path.join(img_annot_file, "annotate.txt")
+    img_annot_file = os.path.join(img_annot_file, img_annotate_file)
 
     save_folder = os.path.join(save_folder, EVENT_FOLDER)
     if not os.path.exists(save_folder):
@@ -24,6 +25,7 @@ def anotate_events(bag, topic="/dvs/events", save_folder="data_bBox", class_bag=
     if df.empty: 
         print("Empty file")
         return
+    df = df.sort_values(by=['timestamp'])
 
     previous_data = df.iloc[0]
     count = 0

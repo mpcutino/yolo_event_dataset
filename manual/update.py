@@ -8,7 +8,8 @@ from darknet import draw_bBox
 from constants import IMG_FOLDER
 
 
-def update_yolo_data(class_name, bag_name, labels_file="manual/missing_labels.csv", data_folder="data_bBox", annot_file="annotate.txt"):
+def update_yolo_data(class_name, bag_name, labels_file="manual/missing_labels.csv",
+                     data_folder="data_bBox", annot_file="annotate.txt"):
     manual_data_df = pd.read_csv(labels_file, header=None)
     manual_data_df.columns = ["class_name", "x", "y", "w", "h", "filename", "img_w", "img_h"]
 

@@ -71,18 +71,19 @@ def plot_events_images(class_name, bag_name, data_folder="data_bBox", overwrite=
     for img_name in df.next_img_name.unique():
         if overwrite or img_name not in images:
             plot_events_imgs_by_name(class_name, bag_name, img_name)
-            count+=1
+            count += 1
     print(count)
 
 
-def plot_all_events_at_image_fr(bag, topic="/dvs/events", save_folder="data_bBox", class_bag="chair", img_w=346, img_h=260):
+def plot_all_events_at_image_fr(bag, topic="/dvs/events", save_folder="data_bBox",
+                                class_bag="chair", img_w=346, img_h=260, img_annotate_file="annotate.txt"):
     
     save_folder = os.path.join(save_folder, class_bag)
     bag_name = get_filename(bag.filename, char="/")
     bag_name = remove_extension(bag_name)
     save_folder = os.path.join(save_folder, bag_name)
     img_annot_file = os.path.join(save_folder, IMG_FOLDER)
-    img_annot_file = os.path.join(img_annot_file, "annotate.txt")
+    img_annot_file = os.path.join(img_annot_file, img_annotate_file)
     train_folder = os.path.join(save_folder, TRAIN_FOLDER)
 
     if not os.path.exists(train_folder):

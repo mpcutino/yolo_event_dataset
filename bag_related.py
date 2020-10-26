@@ -42,6 +42,8 @@ def save_images(bag, topic="/dvs/image_raw", save_folder="data_bBox", class_bag=
             filename = str(timestamp) + ".png"
 
             cv_image = bridge.imgmsg_to_cv2(msg.message, "rgb8")
+            # esto para los datos del ornitoptero en el que las imagenes estan rotadas
+            cv_image = cv2.rotate(cv_image, cv2.ROTATE_180)
             # solo salvar de manera temporal para usar darknet
             tmp_name = os.path.join(clean_img_folder, filename)
             cv2.imwrite(tmp_name, cv_image)
@@ -90,8 +92,8 @@ if __name__ == "__main__":
     path = os.path.join(BAG_BASE_PATH, "{0}/{1}.bag".format(class_bag, bag_name))
     start_indx = get_start_index(class_bag, bag_name, IMG_FOLDER)
     print(start_indx)
-    start_indx = -1
-    ammount = -1
+    # start_indx = -1
+    ammount = 1000
     #RECORDAR en la siguiente iteracion comenzar en start_index + ammount
 
     bag = rosbag.Bag(path)

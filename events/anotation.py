@@ -27,7 +27,7 @@ def anotate_events(bag, topic="/dvs/events", save_folder="data_bBox", class_bag=
         return
     df = df.sort_values(by=['timestamp'])
 
-    previous_data = df.iloc[0]
+    previous_data = df.loc[df["timestamp"] == df.iloc[0].timestamp]
     count = 0
 
     file_data = os.path.join(save_folder, "annotate_events.txt")
@@ -35,59 +35,60 @@ def anotate_events(bag, topic="/dvs/events", save_folder="data_bBox", class_bag=
     with open(file_data, 'a') as fd:
         if not file_data_exist:
             # estamos creando el archivo... escribir cabeceras
-            fd.write("timestamp,x,y,p,prv_img_name,prv_class_name,prv_box_x,prv_box_y,\
-prv_box_w,prv_box_h,prv_proba,prv_tagger,\
-next_img_name,next_class_name,next_box_x,next_box_y,next_box_w,\
-next_box_h,next_proba,next_tagger\n")
+            fd.write("timestamp, x, y, p, img_name, class_name, box_x, box_y, box_w, box_h, box_prob, box_tagger\n")
 
         events_count = -1
         for msg in bag.read_messages(topic):
             current_data = df.iloc[count]
             img_ts = genpy.Time.from_sec(current_data.timestamp*1e-9)
+            # use all boxes with the same timestamp
+            current_data = df.loc[df["timestamp"] == current_data.timestamp]
 
             for e in msg.message.events:
                 x, y, p, ts = e.x, e.y, e.polarity, e.ts
                 while img_ts < ts:
-                    # esto con un if deberia funcionar porque no debe haber mas de una 
-                    # imagen entre dos eventos
                     count += 1
                     if count >= df.shape[0]:
                         return
                     tmp = df.iloc[count]
+                    img_ts = genpy.Time.from_sec(tmp.timestamp*1e-9)
+                    tmp = df.loc[df["timestamp"] == tmp.timestamp]
                     previous_data = current_data
                     current_data = tmp
-                    img_ts = genpy.Time.from_sec(current_data.timestamp*1e-9)
-                if is_in_union_box(x, y, previous_data, current_data, class_bag):
+                series_data = is_in_union_box(x, y, previous_data, current_data, class_bag)
+                if series_data is not None:
                     # para solo procesar un numero determinado de eventos en cada corrida
                     events_count += 1
                     if events_count < start_indx: continue
-                    if how_many > 0  and (start_indx + how_many <= events_count):
+                    if how_many > 0 and (start_indx + how_many <= events_count):
                         return
-                    fd.write('{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19}\n'.format(
+                    fd.write('{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}\n'.format(
                         str(ts),
                         x, y, p,
-                        previous_data.boxImg_name,
-                        previous_data.class_name,
-                        previous_data.x,
-                        previous_data.y,
-                        previous_data.w,
-                        previous_data.h,
-                        previous_data.proba,
-                        previous_data.tagger,
-
-                        current_data.boxImg_name,
-                        current_data.class_name,
-                        current_data.x,
-                        current_data.y,
-                        current_data.w,
-                        current_data.h,
-                        current_data.proba,
-                        current_data.tagger
+                        series_data.boxImg_name,
+                        series_data.class_name,
+                        series_data.x,
+                        series_data.y,
+                        series_data.w,
+                        series_data.h,
+                        series_data.proba,
+                        series_data.tagger
                     ))
 
 
 def is_in_union_box(x, y, previous_data, current_data, class_name):
-    return is_in_box(x, y, previous_data, class_name) or is_in_box(x, y, current_data, class_name)
+    series_data = is_in_df(x, y, previous_data, class_name)
+    if series_data is None:
+        series_data = is_in_df(x, y, current_data, class_name)
+    return series_data
+    # return is_in_box(x, y, previous_data, class_name) or is_in_box(x, y, current_data, class_name)
+
+
+def is_in_df(x, y, df, class_name):
+    for _, data in df.iterrows():
+        if is_in_box(x, y, data, class_name):
+            return data
+    return None
 
 
 def is_in_box(x, y, data, class_name):

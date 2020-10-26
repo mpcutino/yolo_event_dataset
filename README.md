@@ -14,3 +14,7 @@ I can remove specific tags in image, make new bounding boxes and remove all
 appearance of some tag from all the dataframe. This tool save results in a 
 new dataframe named *edited_annotate.txt*.
 
+For make an event dataframe with events classification according to image 
+timestamp and bounding boxes, use *anotate_events* function from 
+*events/annotation.py* (see *main.py* for examples). The csv file created is 
+named *annotate_events.txt*.

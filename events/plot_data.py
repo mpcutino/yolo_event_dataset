@@ -25,27 +25,23 @@ def plot_events_imgs_by_name(class_name, bag_name, img_name, save_folder="data_b
     if df.shape[0] == 0: 
         print("No annotation file")
         return
-    df = df.loc[df["next_img_name"]==img_name]
+    df = df.loc[df["img_name"] == img_name]
     if df.shape[0] == 0: 
         print("No data recorded for that image ({0})".format(img_name))
         return
     r = df.iloc[0]
-    prv_class_name, prv_box_x, prv_box_y, prv_box_w, prv_box_h = r.prv_class_name, r.prv_box_x,r.prv_box_y,r.prv_box_w,r.prv_box_h
-    next_class_name, next_box_x, next_box_y, next_box_w, next_box_h = r.next_class_name,r.next_box_x,r.next_box_y,r.next_box_w,r.next_box_h
+    next_class_name, next_box_x, next_box_y, next_box_w, next_box_h = r.class_name, r.box_x, r.box_y, r.box_w, r.box_h
 
     img = def_image(img_h, img_w)
     # img_path = os.path.join(img_folder, img_name)
     # image = cv2.imread(img_path)
-    for _, r in df.loc[df["next_img_name"]==img_name].iterrows():
+    for _, r in df.loc[df["img_name"] == img_name].iterrows():
         ev_x, ev_y, ev_p = r.x, r.y, r.p
         color = (0, 0, 255) if ev_p > 0 else (255, 0, 0)
 
         img[ev_y][ev_x] = color
     
     img = np.ascontiguousarray(img, dtype=np.uint8)
-    start = (prv_box_x, prv_box_y)
-    end = (prv_box_x + prv_box_w, prv_box_y + prv_box_h)
-    draw_bBox(img, start, end, "")
     
     start = (next_box_x, next_box_y)
     end = (next_box_x + next_box_w, next_box_y + next_box_h)
@@ -68,7 +64,7 @@ def plot_events_images(class_name, bag_name, data_folder="data_bBox", overwrite=
     
     images = list(os.listdir(folder))
     count = 0
-    for img_name in df.next_img_name.unique():
+    for img_name in df.img_name.unique():
         if overwrite or img_name not in images:
             plot_events_imgs_by_name(class_name, bag_name, img_name)
             count += 1

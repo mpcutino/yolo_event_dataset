@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     start_indx = get_number_of_annotated_events(class_bag, bag_name)
     print(start_indx)
-    ammount = 500000
+    ammount = -1
 
     # update_yolo_data(CLASS_BAG, BAG_NAME)
     # update_images_bBox(class_bag, bag)
